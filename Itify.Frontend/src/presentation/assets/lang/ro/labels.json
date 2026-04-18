@@ -1,0 +1,10 @@
+{
+    "labels.itemsPerPage": "Intrari pe pagina",
+    "labels.paginationLabelNormal": "{from}-{to} din {count}",
+    "labels.paginationLabelOverflow": "{from}-{to} din mai mult de {to}",
+    "labels.yes": "Da",
+    "labels.no": "Nu",
+    "labels.actions": "Actiuni",
+    "labels.addUser": "Adauga utilizator",
+    "labels.addUserFile": "Adauga fisier"
+}

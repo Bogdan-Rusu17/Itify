@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MobyLabWebProgramming.Api/MobyLabWebProgramming.Api.csproj" />
+  <Project Path="MobyLabWebProgramming.Database/MobyLabWebProgramming.Database.csproj" />
+  <Project Path="MobyLabWebProgramming.Infrastructure/MobyLabWebProgramming.Infrastructure.csproj" />
+  <Project Path="MobyLabWebProgramming.Services/MobyLabWebProgramming.Services.csproj" />
+</Solution>
