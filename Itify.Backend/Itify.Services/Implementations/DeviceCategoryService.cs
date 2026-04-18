@@ -74,6 +74,10 @@ public class DeviceCategoryService(IRepository<WebAppDatabaseContext> repository
         if (!new List<UserRoleEnum> { UserRoleEnum.Admin, UserRoleEnum.ItEngineer }.Contains(requestingUser.Role))
             return ServiceResponse.FromError(CommonErrors.DeviceCategoryUnauthorized);
 
+        var deviceCount = await repository.GetCountAsync(new DeviceSpec(id, true), cancellationToken);
+        if (deviceCount > 0)
+            return ServiceResponse.FromError(CommonErrors.DeviceCategoryHasDevices);
+
         await repository.DeleteAsync<DeviceCategory>(id, cancellationToken);
 
         return ServiceResponse.ForSuccess();

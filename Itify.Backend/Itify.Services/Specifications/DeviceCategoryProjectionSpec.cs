@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Itify.Services.Specifications;
 
-public class DeviceCategoryProjectionSpec : Specification<DeviceCategory, DeviceCategoryRecord>
+public sealed class DeviceCategoryProjectionSpec : Specification<DeviceCategory, DeviceCategoryRecord>
 {
     public DeviceCategoryProjectionSpec(bool orderByCreatedAt = false)
     {

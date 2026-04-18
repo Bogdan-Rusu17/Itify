@@ -14,4 +14,9 @@ public sealed class DeviceSpec : Specification<Device>
     {
         Query.Where(device => device.SerialNumber == serialNumber);
     }
+
+    public DeviceSpec(Guid categoryId, bool byCategoryId)
+    {
+        Query.Where(device => device.CategoryId == categoryId);
+    }
 }

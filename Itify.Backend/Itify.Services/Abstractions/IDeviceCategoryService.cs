@@ -10,14 +10,18 @@ public interface IDeviceCategoryService
         CancellationToken cancellationToken = default);
 
     public Task<ServiceResponse<PagedResponse<DeviceCategoryRecord>>> GetDeviceCategories(
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default);
-
-    public Task<ServiceResponse> AddDeviceCategory(DeviceCategoryAddRecord category, UserRecord requestingUser,
+        PaginationSearchQueryParams pagination,
         CancellationToken cancellationToken = default);
 
-    public Task<ServiceResponse> UpdateDeviceCategory(DeviceCategoryUpdateRecord category, UserRecord requestingUser,
+    public Task<ServiceResponse> AddDeviceCategory(DeviceCategoryAddRecord category,
+        UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 
-    public Task<ServiceResponse> DeleteDeviceCategory(Guid id, UserRecord requestingUser,
+    public Task<ServiceResponse> UpdateDeviceCategory(DeviceCategoryUpdateRecord category,
+        UserRecord requestingUser,
+        CancellationToken cancellationToken = default);
+
+    public Task<ServiceResponse> DeleteDeviceCategory(Guid id,
+        UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 }

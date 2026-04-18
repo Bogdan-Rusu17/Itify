@@ -3,7 +3,7 @@ using Itify.Database.Repository.Entities;
 
 namespace Itify.Services.Specifications;
 
-public class DeviceCategorySpec : Specification<DeviceCategory>
+public sealed class DeviceCategorySpec : Specification<DeviceCategory>
 {
     public DeviceCategorySpec(Guid id)
     {
