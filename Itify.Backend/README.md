@@ -1,4 +1,4 @@
-# MobyLabWebProgramming
+# Itify
 
 This is an example application to teach students the basics of web programming.
 
@@ -22,13 +22,13 @@ dotnet tool install --global dotnet-ef --version 10.*
 To create a new migration use the following command and replace migration_name with the name of your new migration, usually the first migration is called "InitialCreate":
 
 ```sh
-dotnet ef migrations add <migration_name> --context WebAppDatabaseContext --project .\MobyLabWebProgramming.Database --startup-project .\MobyLabWebProgramming.Api
+dotnet ef migrations add <migration_name> --context WebAppDatabaseContext --project .\Itify.Database --startup-project .\Itify.Api
 ```
 
 Example for the first migration:
 
 ```sh
-dotnet ef migrations add InitialCreate --context WebAppDatabaseContext --project .\MobyLabWebProgramming.Database --startup-project .\MobyLabWebProgramming.Api
+dotnet ef migrations add InitialCreate --context WebAppDatabaseContext --project .\Itify.Database --startup-project .\Itify.Api
 ```
 
 The project has a worker service that will initialize the database with a first admin user. To log in the default user is "admin@default.com" with password "default".

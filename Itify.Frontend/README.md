@@ -1,4 +1,4 @@
-# MobyLabWebProgramming
+# Itify
 
 This is a example application to teach students the basics of web programming.
 
