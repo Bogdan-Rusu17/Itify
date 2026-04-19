@@ -35,4 +35,14 @@ public sealed class DeviceProjectionSpec : Specification<Device, DeviceRecord>
         var engineSearchExpr = $"%{searchExpr.Replace(" ", "%")}%";
         Query.Where(d => EF.Functions.ILike(d.Name, engineSearchExpr));
     }
+
+    public DeviceProjectionSpec(string? searchExpr, Guid userId) : this(searchExpr)
+    {
+        Query.Where(d => d.Assignments.Any(a => a.UserId == userId && a.ReturnedAt == null));
+    }
+
+    public DeviceProjectionSpec(Guid id, Guid userId) : this(id)
+    {
+        Query.Where(d => d.Assignments.Any(a => a.UserId == userId && a.ReturnedAt == null));
+    }
 }

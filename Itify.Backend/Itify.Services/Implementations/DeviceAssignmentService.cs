@@ -13,32 +13,45 @@ namespace Itify.Services.Implementations;
 
 public class DeviceAssignmentService(IRepository<WebAppDatabaseContext> repository) : IDeviceAssignmentService
 {
-    public async Task<ServiceResponse<DeviceAssignmentRecord>> GetDeviceAssignment(Guid id,
+    public async Task<ServiceResponse<DeviceAssignmentRecord>> GetDeviceAssignment(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
     {
-        var result = await repository.GetAsync(new DeviceAssignmentProjectionSpec(id), cancellationToken);
+        DeviceAssignmentProjectionSpec spec;
+
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new DeviceAssignmentProjectionSpec(id, requestingUser.Id);
+        }
+        else
+        {
+            spec = new DeviceAssignmentProjectionSpec(id);
+        }
+
+        var result = await repository.GetAsync(spec, cancellationToken);
 
         if (result == null)
+        {
             return ServiceResponse.FromError<DeviceAssignmentRecord>(CommonErrors.DeviceAssignmentNotFound);
+        }
 
         return ServiceResponse.ForSuccess(result);
     }
 
     public async Task<ServiceResponse<PagedResponse<DeviceAssignmentRecord>>> GetDeviceAssignments(
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default)
+        PaginationSearchQueryParams pagination, UserRecord requestingUser, CancellationToken cancellationToken = default)
     {
-        var result = await repository.PageAsync(pagination, new DeviceAssignmentProjectionSpec(pagination.Search),
-            cancellationToken);
+        DeviceAssignmentProjectionSpec spec;
 
-        return ServiceResponse.ForSuccess(result);
-    }
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new DeviceAssignmentProjectionSpec(pagination.Search, requestingUser.Id);
+        }
+        else
+        {
+            spec = new DeviceAssignmentProjectionSpec(pagination.Search);
+        }
 
-    public async Task<ServiceResponse<PagedResponse<DeviceAssignmentRecord>>> GetMyDeviceAssignments(Guid userId,
-        PaginationSearchQueryParams pagination,
-        CancellationToken cancellationToken = default)
-    {
-        var result = await repository.PageAsync(pagination, new DeviceAssignmentProjectionSpec(userId, true),
-            cancellationToken);
+        var result = await repository.PageAsync(pagination, spec, cancellationToken);
 
         return ServiceResponse.ForSuccess(result);
     }

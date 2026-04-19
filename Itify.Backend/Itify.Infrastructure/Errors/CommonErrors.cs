@@ -96,4 +96,22 @@ public static class CommonErrors
 
     public static ErrorMessage UserGroupUnauthorized =>
         new(HttpStatusCode.Forbidden, "Only admins can manage user groups!", ErrorCodes.CannotAdd);
+
+    public static ErrorMessage UserAlreadyExists =>
+        new(HttpStatusCode.Conflict, "The user already exists!", ErrorCodes.UserAlreadyExists);
+
+    public static ErrorMessage UserAddUnauthorized =>
+        new(HttpStatusCode.Forbidden, "Only the admin can add users!", ErrorCodes.CannotAdd);
+
+    public static ErrorMessage UserUpdateUnauthorized =>
+        new(HttpStatusCode.Forbidden, "Only the admin or the own user can update the user!", ErrorCodes.CannotUpdate);
+
+    public static ErrorMessage UserDeleteUnauthorized =>
+        new(HttpStatusCode.Forbidden, "Only the admin or the own user can delete the user!", ErrorCodes.CannotDelete);
+
+    public static ErrorMessage WrongPassword =>
+        new(HttpStatusCode.BadRequest, "Wrong password!", ErrorCodes.WrongPassword);
+
+    public static ErrorMessage RegisterRoleNotAllowed =>
+        new(HttpStatusCode.BadRequest, "Only the Employee role is allowed for self-registration!", ErrorCodes.CannotAdd);
 }

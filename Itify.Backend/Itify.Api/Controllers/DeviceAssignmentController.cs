@@ -23,7 +23,7 @@ public class DeviceAssignmentController(
         var currentUser = await GetCurrentUser();
         if (currentUser.Result == null) return ErrorMessageResult<DeviceAssignmentRecord>(currentUser.Error);
 
-        return FromServiceResponse(await deviceAssignmentService.GetDeviceAssignment(id));
+        return FromServiceResponse(await deviceAssignmentService.GetDeviceAssignment(id, currentUser.Result));
     }
 
     [Authorize]
@@ -35,20 +35,7 @@ public class DeviceAssignmentController(
         if (currentUser.Result == null)
             return ErrorMessageResult<PagedResponse<DeviceAssignmentRecord>>(currentUser.Error);
 
-        return FromServiceResponse(await deviceAssignmentService.GetDeviceAssignments(pagination));
-    }
-
-    [Authorize]
-    [HttpGet]
-    public async Task<ActionResult<RequestResponse<PagedResponse<DeviceAssignmentRecord>>>> GetMyAssignments(
-        [FromQuery] PaginationSearchQueryParams pagination)
-    {
-        var currentUser = await GetCurrentUser();
-        if (currentUser.Result == null)
-            return ErrorMessageResult<PagedResponse<DeviceAssignmentRecord>>(currentUser.Error);
-
-        return FromServiceResponse(
-            await deviceAssignmentService.GetMyDeviceAssignments(currentUser.Result.Id, pagination));
+        return FromServiceResponse(await deviceAssignmentService.GetDeviceAssignments(pagination, currentUser.Result));
     }
 
     [Authorize]

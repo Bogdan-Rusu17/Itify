@@ -13,21 +13,45 @@ namespace Itify.Services.Implementations;
 
 public class DeviceRequestService(IRepository<WebAppDatabaseContext> repository) : IDeviceRequestService
 {
-    public async Task<ServiceResponse<DeviceRequestRecord>> GetDeviceRequest(Guid id,
+    public async Task<ServiceResponse<DeviceRequestRecord>> GetDeviceRequest(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
     {
-        var result = await repository.GetAsync(new DeviceRequestProjectionSpec(id), cancellationToken);
+        DeviceRequestProjectionSpec spec;
 
-        if (result == null) return ServiceResponse.FromError<DeviceRequestRecord>(CommonErrors.DeviceRequestNotFound);
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new DeviceRequestProjectionSpec(id, requestingUser.Id);
+        }
+        else
+        {
+            spec = new DeviceRequestProjectionSpec(id);
+        }
+
+        var result = await repository.GetAsync(spec, cancellationToken);
+
+        if (result == null)
+        {
+            return ServiceResponse.FromError<DeviceRequestRecord>(CommonErrors.DeviceRequestNotFound);
+        }
 
         return ServiceResponse.ForSuccess(result);
     }
 
     public async Task<ServiceResponse<PagedResponse<DeviceRequestRecord>>> GetDeviceRequests(
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default)
+        PaginationSearchQueryParams pagination, UserRecord requestingUser, CancellationToken cancellationToken = default)
     {
-        var result = await repository.PageAsync(pagination, new DeviceRequestProjectionSpec(pagination.Search),
-            cancellationToken);
+        DeviceRequestProjectionSpec spec;
+
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new DeviceRequestProjectionSpec(pagination.Search, requestingUser.Id);
+        }
+        else
+        {
+            spec = new DeviceRequestProjectionSpec(pagination.Search);
+        }
+
+        var result = await repository.PageAsync(pagination, spec, cancellationToken);
 
         return ServiceResponse.ForSuccess(result);
     }

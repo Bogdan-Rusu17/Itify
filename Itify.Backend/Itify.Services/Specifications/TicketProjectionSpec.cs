@@ -39,7 +39,12 @@ public sealed class TicketProjectionSpec : Specification<Ticket, TicketRecord>
             engineSearchExpr));
     }
 
-    public TicketProjectionSpec(Guid userId, bool withUserId) : this(true)
+    public TicketProjectionSpec(string? searchExpr, Guid userId) : this(searchExpr)
+    {
+        Query.Where(t => t.UserId == userId);
+    }
+
+    public TicketProjectionSpec(Guid id, Guid userId) : this(id)
     {
         Query.Where(t => t.UserId == userId);
     }

@@ -23,7 +23,7 @@ public class TicketController(
         var currentUser = await GetCurrentUser();
         if (currentUser.Result == null) return ErrorMessageResult<TicketRecord>(currentUser.Error);
 
-        return FromServiceResponse(await ticketService.GetTicket(id));
+        return FromServiceResponse(await ticketService.GetTicket(id, currentUser.Result));
     }
 
     [Authorize]
@@ -34,18 +34,7 @@ public class TicketController(
         var currentUser = await GetCurrentUser();
         if (currentUser.Result == null) return ErrorMessageResult<PagedResponse<TicketRecord>>(currentUser.Error);
 
-        return FromServiceResponse(await ticketService.GetTickets(pagination));
-    }
-
-    [Authorize]
-    [HttpGet]
-    public async Task<ActionResult<RequestResponse<PagedResponse<TicketRecord>>>> GetMyTickets(
-        [FromQuery] PaginationSearchQueryParams pagination)
-    {
-        var currentUser = await GetCurrentUser();
-        if (currentUser.Result == null) return ErrorMessageResult<PagedResponse<TicketRecord>>(currentUser.Error);
-
-        return FromServiceResponse(await ticketService.GetMyTickets(currentUser.Result.Id, pagination));
+        return FromServiceResponse(await ticketService.GetTickets(pagination, currentUser.Result));
     }
 
     [Authorize]

@@ -25,7 +25,7 @@ public class DeviceController(ILogger<DeviceController> logger,
             return ErrorMessageResult<DeviceRecord>(currentUser.Error);
         }
 
-        return FromServiceResponse(await deviceService.GetDevice(id));
+        return FromServiceResponse(await deviceService.GetDevice(id, currentUser.Result));
     }
     
     [Authorize]
@@ -39,7 +39,7 @@ public class DeviceController(ILogger<DeviceController> logger,
             return ErrorMessageResult<PagedResponse<DeviceRecord>>(currentUser.Error);
         }
 
-        return FromServiceResponse(await deviceService.GetDevices(pagination));
+        return FromServiceResponse(await deviceService.GetDevices(pagination, currentUser.Result));
     }
     
     [Authorize]

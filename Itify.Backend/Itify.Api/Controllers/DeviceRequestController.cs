@@ -23,7 +23,7 @@ public class DeviceRequestController(
     {
         var currentUser = await GetCurrentUser();
         if (currentUser.Result == null) return ErrorMessageResult<DeviceRequestRecord>(currentUser.Error);
-        return FromServiceResponse(await deviceRequestService.GetDeviceRequest(id));
+        return FromServiceResponse(await deviceRequestService.GetDeviceRequest(id, currentUser.Result));
     }
 
     [Authorize]
@@ -37,7 +37,7 @@ public class DeviceRequestController(
         if (currentUser.Result == null)
             return ErrorMessageResult<PagedResponse<DeviceRequestRecord>>(currentUser.Error);
 
-        return FromServiceResponse(await deviceRequestService.GetDeviceRequests(pagination));
+        return FromServiceResponse(await deviceRequestService.GetDeviceRequests(pagination, currentUser.Result));
     }
 
     [Authorize]

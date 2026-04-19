@@ -13,10 +13,21 @@ namespace Itify.Services.Implementations;
 
 public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITicketService
 {
-    public async Task<ServiceResponse<TicketRecord>> GetTicket(Guid id,
+    public async Task<ServiceResponse<TicketRecord>> GetTicket(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
     {
-        var result = await repository.GetAsync(new TicketProjectionSpec(id), cancellationToken);
+        TicketProjectionSpec spec;
+
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new TicketProjectionSpec(id, requestingUser.Id);
+        }
+        else
+        {
+            spec = new TicketProjectionSpec(id);
+        }
+
+        var result = await repository.GetAsync(spec, cancellationToken);
 
         if (result == null)
         {
@@ -27,17 +38,20 @@ public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITic
     }
 
     public async Task<ServiceResponse<PagedResponse<TicketRecord>>> GetTickets(
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default)
+        PaginationSearchQueryParams pagination, UserRecord requestingUser, CancellationToken cancellationToken = default)
     {
-        var result = await repository.PageAsync(pagination, new TicketProjectionSpec(pagination.Search), cancellationToken);
+        TicketProjectionSpec spec;
 
-        return ServiceResponse.ForSuccess(result);
-    }
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new TicketProjectionSpec(pagination.Search, requestingUser.Id);
+        }
+        else
+        {
+            spec = new TicketProjectionSpec(pagination.Search);
+        }
 
-    public async Task<ServiceResponse<PagedResponse<TicketRecord>>> GetMyTickets(Guid userId,
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default)
-    {
-        var result = await repository.PageAsync(pagination, new TicketProjectionSpec(userId, true), cancellationToken);
+        var result = await repository.PageAsync(pagination, spec, cancellationToken);
 
         return ServiceResponse.ForSuccess(result);
     }

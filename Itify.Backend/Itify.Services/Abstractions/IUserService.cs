@@ -14,6 +14,8 @@ public interface IUserService
     /// GetUser will provide the information about a user given its user Id.
     /// </summary>
     public Task<ServiceResponse<UserRecord>> GetUser(Guid id, CancellationToken cancellationToken = default);
+    public Task<ServiceResponse<UserRecord>> GetUser(Guid id, UserRecord requestingUser, CancellationToken cancellationToken = default);
+    public Task<ServiceResponse> Register(UserAddRecord user, CancellationToken cancellationToken = default);
     /// <summary>
     /// GetUsers returns page with user information from the database.
     /// </summary>

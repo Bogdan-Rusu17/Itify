@@ -13,20 +13,45 @@ namespace Itify.Services.Implementations;
 
 public class DeviceService(IRepository<WebAppDatabaseContext> repository) : IDeviceService
 {
-    public async Task<ServiceResponse<DeviceRecord>> GetDevice(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ServiceResponse<DeviceRecord>> GetDevice(Guid id, UserRecord requestingUser,
+        CancellationToken cancellationToken = default)
     {
-        var result = await repository.GetAsync(new DeviceProjectionSpec(id), cancellationToken);
+        DeviceProjectionSpec spec;
 
-        if (result == null) return ServiceResponse.FromError<DeviceRecord>(CommonErrors.DeviceNotFound);
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new DeviceProjectionSpec(id, requestingUser.Id);
+        }
+        else
+        {
+            spec = new DeviceProjectionSpec(id);
+        }
+
+        var result = await repository.GetAsync(spec, cancellationToken);
+
+        if (result == null)
+        {
+            return ServiceResponse.FromError<DeviceRecord>(CommonErrors.DeviceNotFound);
+        }
 
         return ServiceResponse.ForSuccess(result);
     }
 
     public async Task<ServiceResponse<PagedResponse<DeviceRecord>>> GetDevices(PaginationSearchQueryParams pagination,
-        CancellationToken cancellationToken = default)
+        UserRecord requestingUser, CancellationToken cancellationToken = default)
     {
-        var result =
-            await repository.PageAsync(pagination, new DeviceProjectionSpec(pagination.Search), cancellationToken);
+        DeviceProjectionSpec spec;
+
+        if (requestingUser.Role == UserRoleEnum.Employee)
+        {
+            spec = new DeviceProjectionSpec(pagination.Search, requestingUser.Id);
+        }
+        else
+        {
+            spec = new DeviceProjectionSpec(pagination.Search);
+        }
+
+        var result = await repository.PageAsync(pagination, spec, cancellationToken);
 
         return ServiceResponse.ForSuccess(result);
     }

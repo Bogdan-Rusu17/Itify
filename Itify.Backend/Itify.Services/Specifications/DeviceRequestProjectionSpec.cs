@@ -33,4 +33,14 @@ public class DeviceRequestProjectionSpec : Specification<DeviceRequest, DeviceRe
         var engineSearchExpr = $"%{searchExpr.Replace(" ", "%")}%";
         Query.Where(dr => EF.Functions.ILike(dr.Reason, engineSearchExpr));
     }
+
+    public DeviceRequestProjectionSpec(string? searchExpr, Guid userId) : this(searchExpr)
+    {
+        Query.Where(dr => dr.UserId == userId);
+    }
+
+    public DeviceRequestProjectionSpec(Guid id, Guid userId) : this(id)
+    {
+        Query.Where(dr => dr.UserId == userId);
+    }
 }

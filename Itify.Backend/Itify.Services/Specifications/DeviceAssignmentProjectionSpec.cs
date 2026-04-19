@@ -35,7 +35,12 @@ public sealed class DeviceAssignmentProjectionSpec : Specification<DeviceAssignm
         Query.Where(e => EF.Functions.ILike(e.Device.Name, engineSearchExpr));
     }
 
-    public DeviceAssignmentProjectionSpec(Guid userId, bool withUserId) : this(true)
+    public DeviceAssignmentProjectionSpec(string? searchExpr, Guid userId) : this(searchExpr)
+    {
+        Query.Where(e => e.UserId == userId);
+    }
+
+    public DeviceAssignmentProjectionSpec(Guid id, Guid userId) : this(id)
     {
         Query.Where(e => e.UserId == userId);
     }

@@ -6,14 +6,11 @@ namespace Itify.Services.Abstractions;
 
 public interface IDeviceAssignmentService
 {
-    public Task<ServiceResponse<DeviceAssignmentRecord>> GetDeviceAssignment(Guid id,
+    public Task<ServiceResponse<DeviceAssignmentRecord>> GetDeviceAssignment(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 
     public Task<ServiceResponse<PagedResponse<DeviceAssignmentRecord>>> GetDeviceAssignments(
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default);
-
-    public Task<ServiceResponse<PagedResponse<DeviceAssignmentRecord>>> GetMyDeviceAssignments(Guid userId,
-        PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default);
+        PaginationSearchQueryParams pagination, UserRecord requestingUser, CancellationToken cancellationToken = default);
 
     public Task<ServiceResponse> AddDeviceAssignment(DeviceAssignmentAddRecord assignment, UserRecord requestingUser,
         CancellationToken cancellationToken = default);
