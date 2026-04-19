@@ -1,17 +1,23 @@
 using Itify.Database.Repository;
 using Itify.Database.Repository.Entities;
 using Itify.Database.Repository.Enums;
+using Itify.Infrastructure.Configurations;
 using Itify.Infrastructure.Errors;
 using Itify.Infrastructure.Repositories.Interfaces;
 using Itify.Infrastructure.Requests;
 using Itify.Infrastructure.Responses;
 using Itify.Services.Abstractions;
+using Itify.Services.Constants;
 using Itify.Services.DataTransferObjects;
 using Itify.Services.Specifications;
+using Microsoft.Extensions.Options;
 
 namespace Itify.Services.Implementations;
 
-public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITicketService
+public class TicketService(
+    IRepository<WebAppDatabaseContext> repository,
+    IMailService mailService,
+    IOptions<MailConfiguration> mailConfiguration) : ITicketService
 {
     public async Task<ServiceResponse<TicketRecord>> GetTicket(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
@@ -101,6 +107,18 @@ public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITic
             UserId = requestingUser.Id
         }, cancellationToken);
 
+        var staff = await repository.ListAsync(
+            new UserSpec(new List<UserRoleEnum> { UserRoleEnum.Admin, UserRoleEnum.ItEngineer }), cancellationToken);
+
+        foreach (var member in staff)
+        {
+            await mailService.SendMail(
+                member.Email,
+                "New Ticket Submitted",
+                MailTemplates.TicketCreatedTemplate(requestingUser.Name, ticket.Description, ticket.Type.ToString(), mailConfiguration.Value.FrontendUrl),
+                true, "Itify", cancellationToken);
+        }
+
         return ServiceResponse.ForSuccess();
     }
 
@@ -148,6 +166,16 @@ public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITic
         }
 
         await repository.UpdateAsync(entity, cancellationToken);
+
+        var employee = await repository.GetAsync(new UserSpec(entity.UserId), cancellationToken);
+        if (employee != null)
+        {
+            await mailService.SendMail(
+                employee.Email,
+                "Ticket Status Updated",
+                MailTemplates.TicketStatusUpdatedTemplate(employee.Name, entity.Description, ticket.Status.ToString(), mailConfiguration.Value.FrontendUrl),
+                true, "Itify", cancellationToken);
+        }
 
         return ServiceResponse.ForSuccess();
     }

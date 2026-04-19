@@ -1,17 +1,23 @@
 ﻿using Itify.Database.Repository;
 using Itify.Database.Repository.Entities;
 using Itify.Database.Repository.Enums;
+using Itify.Infrastructure.Configurations;
 using Itify.Infrastructure.Errors;
 using Itify.Infrastructure.Repositories.Interfaces;
 using Itify.Infrastructure.Requests;
 using Itify.Infrastructure.Responses;
 using Itify.Services.Abstractions;
+using Itify.Services.Constants;
 using Itify.Services.DataTransferObjects;
 using Itify.Services.Specifications;
+using Microsoft.Extensions.Options;
 
 namespace Itify.Services.Implementations;
 
-public class DeviceAssignmentService(IRepository<WebAppDatabaseContext> repository) : IDeviceAssignmentService
+public class DeviceAssignmentService(
+    IRepository<WebAppDatabaseContext> repository,
+    IMailService mailService,
+    IOptions<MailConfiguration> mailConfiguration) : IDeviceAssignmentService
 {
     public async Task<ServiceResponse<DeviceAssignmentRecord>> GetDeviceAssignment(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
@@ -82,6 +88,16 @@ public class DeviceAssignmentService(IRepository<WebAppDatabaseContext> reposito
             UserId = assignment.UserId,
             AssignedAt = DateTime.UtcNow
         }, cancellationToken);
+
+        var employee = await repository.GetAsync(new UserSpec(assignment.UserId), cancellationToken);
+        if (employee != null)
+        {
+            await mailService.SendMail(
+                employee.Email,
+                "Device Assigned to You",
+                MailTemplates.DeviceAssignedTemplate(employee.Name, device.Name, device.SerialNumber, mailConfiguration.Value.FrontendUrl),
+                true, "Itify", cancellationToken);
+        }
 
         return ServiceResponse.ForSuccess();
     }

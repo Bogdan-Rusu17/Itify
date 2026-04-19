@@ -1,42 +1,93 @@
-﻿namespace Itify.Services.Constants;
+namespace Itify.Services.Constants;
 
-/// <summary>
-/// Here we have a class that provides HTML template for mail bodies. You ami add or change the template if you like.
-/// </summary>
 public static class MailTemplates
 {
-    public static string UserAddTemplate(string name) => $@"<!DOCTYPE html>
-<html lang=""en"" xmlns=""http://www.w3.org/1999/xhtml"">
+    public static string UserAddTemplate(string name) => $@"
+<!DOCTYPE html>
+<html lang=""en"">
 <head>
     <meta charset=""utf-8"" />
-    <title>Mail</title>
-    <style type=""text/css"">
-        p {{
-            margin: 0 0 5px 0;
-        }}
-    </style>
+    <title>Welcome to Itify</title>
 </head>
 <body>
-    <table style=""border: none; height: 48px;"" border=""0"" width=""676"" cellspacing=""0"" cellpadding=""10"" align=""center"" bgcolor=""#FFFFFF"">
-        <tbody>
-            <tr style=""height: 19px;"">
-                <td style=""background: #ffffff; color: #000000; width: 660px; height: 19px;"" align=""left"" valign=""top"" bgcolor=""#ffffff"">
-                    <p style=""font-size: 15px; margin: 0px; color: #003373; letter-spacing: 0.5px;""><strong> Dear mr./ms. {name},</strong></p>
-                </td>
-            </tr>
-            <tr style=""height: 102px;"">
-                <td style=""background: #ffffff; color: #000000; height: 29px; width: 660px;"" align=""center"" valign=""top"" bgcolor=""#ffffff"">
-                    <table style=""border-top: 2px solid #3c87be; width: 660px;"" border=""0"" cellspacing=""0"" cellpadding=""0"">
-                        <tbody>
-                            <tr>
-                                <td>Welcome to My App!</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <p>Dear {name},</p>
+    <p>Welcome to Itify! Your account has been created.</p>
+</body>
+</html>";
+
+    public static string DeviceRequestCreatedTemplate(string employeeName, string categoryName, string reason, string frontendUrl) => $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""utf-8"" />
+    <title>New Device Request</title>
+</head>
+<body>
+    <p>A new device request has been submitted.</p>
+    <p><strong>Employee:</strong> {employeeName}</p>
+    <p><strong>Category:</strong> {categoryName}</p>
+    <p><strong>Reason:</strong> {reason}</p>
+    <p><a href=""{frontendUrl}/device-requests"">View all requests</a></p>
+</body>
+</html>";
+
+    public static string DeviceRequestStatusUpdatedTemplate(string employeeName, string categoryName, string status, string frontendUrl) => $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""utf-8"" />
+    <title>Device Request Updated</title>
+</head>
+<body>
+    <p>Dear {employeeName},</p>
+    <p>Your device request for <strong>{categoryName}</strong> has been <strong>{status}</strong>.</p>
+    <p><a href=""{frontendUrl}/device-requests"">View your requests</a></p>
+</body>
+</html>";
+
+    public static string TicketCreatedTemplate(string employeeName, string description, string type, string frontendUrl) => $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""utf-8"" />
+    <title>New Ticket</title>
+</head>
+<body>
+    <p>A new ticket has been submitted.</p>
+    <p><strong>Employee:</strong> {employeeName}</p>
+    <p><strong>Type:</strong> {type}</p>
+    <p><strong>Description:</strong> {description}</p>
+    <p><a href=""{frontendUrl}/tickets"">View all tickets</a></p>
+</body>
+</html>";
+
+    public static string TicketStatusUpdatedTemplate(string employeeName, string description, string status, string frontendUrl) => $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""utf-8"" />
+    <title>Ticket Updated</title>
+</head>
+<body>
+    <p>Dear {employeeName},</p>
+    <p>Your ticket <strong>""{description}""</strong> has been updated to <strong>{status}</strong>.</p>
+    <p><a href=""{frontendUrl}/tickets"">View your tickets</a></p>
+</body>
+</html>";
+
+    public static string DeviceAssignedTemplate(string employeeName, string deviceName, string serialNumber, string frontendUrl) => $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""utf-8"" />
+    <title>Device Assigned</title>
+</head>
+<body>
+    <p>Dear {employeeName},</p>
+    <p>A device has been assigned to you.</p>
+    <p><strong>Device:</strong> {deviceName}</p>
+    <p><strong>Serial number:</strong> {serialNumber}</p>
+    <p><a href=""{frontendUrl}/devices"">View your devices</a></p>
 </body>
 </html>";
 }

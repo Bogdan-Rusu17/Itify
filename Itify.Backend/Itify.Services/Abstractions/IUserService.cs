@@ -42,6 +42,8 @@ public interface IUserService
     ///     AddUser adds an user and verifies if requesting user has permissions to add one.
     ///     If the requesting user is null then no verification is performed as it indicates that the application.
     /// </summary>
+    public Task<ServiceResponse> AddUser(UserAddRecord user, CancellationToken cancellationToken = default);
+
     public Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 

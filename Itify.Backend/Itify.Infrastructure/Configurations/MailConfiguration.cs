@@ -29,4 +29,5 @@ public class MailConfiguration
     /// The email password credential.
     /// </summary>
     public string MailPassword { get; set; } = null!;
+    public string FrontendUrl { get; set; } = null!;
 }

@@ -111,14 +111,8 @@ public class UserService(
         // Get the count of all user entities in the database.
     }
 
-    public async Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord requestingUser,
-        CancellationToken cancellationToken = default)
+    public async Task<ServiceResponse> AddUser(UserAddRecord user, CancellationToken cancellationToken = default)
     {
-        if (requestingUser.Role != UserRoleEnum.Admin)
-        {
-            return ServiceResponse.FromError(CommonErrors.UserAddUnauthorized);
-        }
-
         var existing = await repository.GetAsync(new UserSpec(user.Email), cancellationToken);
 
         if (existing != null) return ServiceResponse.FromError(CommonErrors.UserAlreadyExists);
@@ -135,6 +129,17 @@ public class UserService(
             cancellationToken);
 
         return ServiceResponse.ForSuccess();
+    }
+
+    public async Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord requestingUser,
+        CancellationToken cancellationToken = default)
+    {
+        if (requestingUser.Role != UserRoleEnum.Admin)
+        {
+            return ServiceResponse.FromError(CommonErrors.UserAddUnauthorized);
+        }
+
+        return await AddUser(user, cancellationToken);
     }
 
     public async Task<ServiceResponse> UpdateUser(UserUpdateRecord user, UserRecord requestingUser,
