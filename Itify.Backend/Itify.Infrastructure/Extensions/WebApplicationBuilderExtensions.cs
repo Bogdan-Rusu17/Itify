@@ -79,6 +79,7 @@ public static class WebApplicationBuilderExtensions
         builder.Services.Configure<JsonOptions>(options =>
         {
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.SerializerOptions.Converters.Add(new UtcDateTimeConverter());
             options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.SerializerOptions.PropertyNameCaseInsensitive = true;
             options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
@@ -87,10 +88,11 @@ public static class WebApplicationBuilderExtensions
             .AddMvc()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // Adds a conversion by name of the enums, otherwise numbers representing the enum values are used.
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // This converts the public property names of the objects serialized to Camel case.
-                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // When deserializing request the properties of the JSON are mapped ignoring the casing.
-                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict; // Only numbers are mapped to numeric field, not strings.
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
             });
 
         return builder;

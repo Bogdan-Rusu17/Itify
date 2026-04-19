@@ -9,4 +9,9 @@ public sealed class TicketSpec : Specification<Ticket>
     {
         Query.Where(t => t.Id == id);
     }
+
+    public TicketSpec(Guid deviceAssignmentId, bool withAssignmentId)
+    {
+        Query.Where(t => t.DeviceAssignmentId == deviceAssignmentId);
+    }
 }

@@ -77,6 +77,18 @@ public class TicketService(
             return ServiceResponse.FromError(CommonErrors.DeviceAssignmentUnauthorized);
         }
 
+        var existingTicket = await repository.GetAsync(new TicketSpec(ticket.DeviceAssignmentId, true), cancellationToken);
+
+        if (existingTicket != null)
+        {
+            if (existingTicket.Status != TicketStatusEnum.Resolved)
+            {
+                return ServiceResponse.FromError(CommonErrors.TicketAlreadyExists);
+            }
+
+            await repository.DeleteAsync<Ticket>(existingTicket.Id, cancellationToken);
+        }
+
         if (ticket.Type == TicketTypeEnum.RepairRequest)
         {
             var device = await repository.GetAsync(new DeviceSpec(assignment.DeviceId), cancellationToken);

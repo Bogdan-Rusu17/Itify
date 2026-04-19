@@ -117,4 +117,7 @@ public static class CommonErrors
 
     public static ErrorMessage DeviceAlreadyInRepair =>
         new(HttpStatusCode.Conflict, "Device is already in repair!", ErrorCodes.CannotAdd);
+
+    public static ErrorMessage TicketAlreadyExists =>
+        new(HttpStatusCode.Conflict, "An unresolved ticket already exists for this device assignment!", ErrorCodes.CannotAdd);
 }

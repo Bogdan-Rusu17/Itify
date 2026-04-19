@@ -47,19 +47,7 @@ public class UserService(
     {
         if (user.Role != UserRoleEnum.Employee) return ServiceResponse.FromError(CommonErrors.RegisterRoleNotAllowed);
 
-        var existing = await repository.GetAsync(new UserSpec(user.Email), cancellationToken);
-
-        if (existing != null) return ServiceResponse.FromError(CommonErrors.UserAlreadyExists);
-
-        await repository.AddAsync(new User
-        {
-            Email = user.Email,
-            Name = user.Name,
-            Role = UserRoleEnum.Employee,
-            Password = user.Password
-        }, cancellationToken);
-
-        return ServiceResponse.ForSuccess();
+        return await AddUser(user, cancellationToken);
     }
 
     public async Task<ServiceResponse<PagedResponse<UserRecord>>> GetUsers(UserPaginationQueryParams pagination,

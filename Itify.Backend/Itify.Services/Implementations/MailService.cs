@@ -7,13 +7,14 @@ using Itify.Infrastructure.Configurations;
 using Itify.Infrastructure.Errors;
 using Itify.Infrastructure.Responses;
 using Itify.Services.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Itify.Services.Implementations;
 
 /// <summary>
 /// Inject the required service configuration from the application.json or environment variables.
 /// </summary>
-public class MailService(IOptions<MailConfiguration> mailConfiguration) : IMailService
+public class MailService(IOptions<MailConfiguration> mailConfiguration, ILogger<MailService> logger) : IMailService
 {
     private readonly MailConfiguration _mailConfiguration = mailConfiguration.Value;
 
@@ -41,8 +42,9 @@ public class MailService(IOptions<MailConfiguration> mailConfiguration) : IMailS
             await client.SendAsync(message, cancellationToken); // Send the message.
             await client.DisconnectAsync(true, cancellationToken); // Disconnect the client from the host to save resources.
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Failed to send mail to {Recipient} with subject '{Subject}'", recipientEmail, subject);
             return ServiceResponse.FromError(new(HttpStatusCode.ServiceUnavailable, "Mail couldn't be send!", ErrorCodes.MailSendFailed));
         }
 
