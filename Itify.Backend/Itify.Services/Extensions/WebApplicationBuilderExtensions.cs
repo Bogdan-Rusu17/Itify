@@ -54,7 +54,8 @@ public static class WebApplicationBuilderExtensions
             .AddScoped<IDeviceCategoryService, DeviceCategoryService>()
             .AddScoped<IDeviceRequestService, DeviceRequestService>()
             .AddScoped<IDeviceAssignmentService, DeviceAssignmentService>()
-            .AddScoped<ITicketService, TicketService>();
+            .AddScoped<ITicketService, TicketService>()
+            .AddScoped<IUserGroupService, UserGroupService>();
 
         return builder;
     }

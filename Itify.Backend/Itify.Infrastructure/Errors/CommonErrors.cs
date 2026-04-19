@@ -87,4 +87,13 @@ public static class CommonErrors
 
     public static ErrorMessage TicketAlreadyResolved =>
         new(HttpStatusCode.BadRequest, "Ticket is already resolved!", ErrorCodes.CannotUpdate);
+
+    public static ErrorMessage UserGroupNotFound =>
+        new(HttpStatusCode.NotFound, "User group doesn't exist!", ErrorCodes.EntityNotFound);
+
+    public static ErrorMessage UserGroupAlreadyExists =>
+        new(HttpStatusCode.Conflict, "A user group with this name already exists!", ErrorCodes.UserAlreadyExists);
+
+    public static ErrorMessage UserGroupUnauthorized =>
+        new(HttpStatusCode.Forbidden, "Only admins can manage user groups!", ErrorCodes.CannotAdd);
 }
