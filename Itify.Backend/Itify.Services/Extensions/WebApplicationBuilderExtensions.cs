@@ -52,7 +52,8 @@ public static class WebApplicationBuilderExtensions
             .AddScoped<IMailService, MailService>()
             .AddScoped<IDeviceService, DeviceService>()
             .AddScoped<IDeviceCategoryService, DeviceCategoryService>()
-            .AddScoped<IDeviceRequestService, DeviceRequestService>();
+            .AddScoped<IDeviceRequestService, DeviceRequestService>()
+            .AddScoped<IDeviceAssignmentService, DeviceAssignmentService>();
 
         return builder;
     }

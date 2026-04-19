@@ -58,4 +58,21 @@ public static class CommonErrors
 
     public static ErrorMessage DeviceCategoryHasDevices => new(HttpStatusCode.Conflict,
         "Cannot delete a category that has devices assigned to it!", ErrorCodes.CannotDelete);
+
+    public static ErrorMessage DeviceAssignmentNotFound =>
+        new(HttpStatusCode.NotFound, "Device assignment doesn't exist!",
+            ErrorCodes.EntityNotFound);
+
+    public static ErrorMessage DeviceNotAvailable => new(HttpStatusCode.Conflict,
+        "Device is not available for assignment!", ErrorCodes.CannotAdd);
+
+    public static ErrorMessage DeviceAlreadyAssignedToUser =>
+        new(HttpStatusCode.Conflict, "This device is already assigned to this user!", ErrorCodes.CannotAdd);
+
+    public static ErrorMessage DeviceAssignmentUnauthorized =>
+        new(HttpStatusCode.Forbidden, "Only admins and IT engineers can manage device assignments!",
+            ErrorCodes.CannotAdd);
+
+    public static ErrorMessage DeviceAlreadyReturned =>
+        new(HttpStatusCode.BadRequest, "Device already returned!", ErrorCodes.CannotUpdate);
 }
