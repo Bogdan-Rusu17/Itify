@@ -114,4 +114,7 @@ public static class CommonErrors
 
     public static ErrorMessage RegisterRoleNotAllowed =>
         new(HttpStatusCode.BadRequest, "Only the Employee role is allowed for self-registration!", ErrorCodes.CannotAdd);
+
+    public static ErrorMessage DeviceAlreadyInRepair =>
+        new(HttpStatusCode.Conflict, "Device is already in repair!", ErrorCodes.CannotAdd);
 }

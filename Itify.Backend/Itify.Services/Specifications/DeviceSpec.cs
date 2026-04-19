@@ -1,5 +1,6 @@
 ﻿using Ardalis.Specification;
 using Itify.Database.Repository.Entities;
+using Itify.Database.Repository.Enums;
 
 namespace Itify.Services.Specifications;
 
@@ -18,5 +19,10 @@ public sealed class DeviceSpec : Specification<Device>
     public DeviceSpec(Guid categoryId, bool byCategoryId)
     {
         Query.Where(device => device.CategoryId == categoryId);
+    }
+
+    public DeviceSpec(Guid categoryId, DeviceStatusEnum status)
+    {
+        Query.Where(device => device.CategoryId == categoryId && device.Status == status);
     }
 }

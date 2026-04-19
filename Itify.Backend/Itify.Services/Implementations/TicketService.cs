@@ -71,6 +71,24 @@ public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITic
             return ServiceResponse.FromError(CommonErrors.DeviceAssignmentUnauthorized);
         }
 
+        if (ticket.Type == TicketTypeEnum.RepairRequest)
+        {
+            var device = await repository.GetAsync(new DeviceSpec(assignment.DeviceId), cancellationToken);
+
+            if (device == null)
+            {
+                return ServiceResponse.FromError(CommonErrors.DeviceNotFound);
+            }
+
+            if (device.Status == DeviceStatusEnum.InRepair)
+            {
+                return ServiceResponse.FromError(CommonErrors.DeviceAlreadyInRepair);
+            }
+
+            device.Status = DeviceStatusEnum.InRepair;
+            await repository.UpdateAsync(device, cancellationToken);
+        }
+
         await repository.AddAsync(new Ticket
         {
             Description = ticket.Description,
@@ -111,6 +129,22 @@ public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITic
         if (ticket.Status == TicketStatusEnum.Resolved)
         {
             entity.ResolvedAt = DateTime.UtcNow;
+
+            if (entity.Type == TicketTypeEnum.RepairRequest)
+            {
+                var assignment = await repository.GetAsync(new DeviceAssignmentSpec(entity.DeviceAssignmentId), cancellationToken);
+
+                if (assignment != null)
+                {
+                    var device = await repository.GetAsync(new DeviceSpec(assignment.DeviceId), cancellationToken);
+
+                    if (device != null)
+                    {
+                        device.Status = DeviceStatusEnum.Assigned;
+                        await repository.UpdateAsync(device, cancellationToken);
+                    }
+                }
+            }
         }
 
         await repository.UpdateAsync(entity, cancellationToken);
@@ -131,6 +165,22 @@ public class TicketService(IRepository<WebAppDatabaseContext> repository) : ITic
         if (!new List<UserRoleEnum> { UserRoleEnum.Admin, UserRoleEnum.ItEngineer }.Contains(requestingUser.Role))
         {
             return ServiceResponse.FromError(CommonErrors.TicketUnauthorizedDelete);
+        }
+
+        if (entity.Status != TicketStatusEnum.Resolved && entity.Type == TicketTypeEnum.RepairRequest)
+        {
+            var assignment = await repository.GetAsync(new DeviceAssignmentSpec(entity.DeviceAssignmentId), cancellationToken);
+
+            if (assignment != null)
+            {
+                var device = await repository.GetAsync(new DeviceSpec(assignment.DeviceId), cancellationToken);
+
+                if (device != null)
+                {
+                    device.Status = DeviceStatusEnum.Assigned;
+                    await repository.UpdateAsync(device, cancellationToken);
+                }
+            }
         }
 
         await repository.DeleteAsync<Ticket>(id, cancellationToken);
