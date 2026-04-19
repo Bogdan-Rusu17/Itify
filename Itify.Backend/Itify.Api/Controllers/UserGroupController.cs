@@ -66,4 +66,46 @@ public class UserGroupController(
 
         return FromServiceResponse(await userGroupService.DeleteUserGroup(id, currentUser.Result));
     }
+
+    [Authorize]
+    [HttpGet("{groupId:guid}/users")]
+    public async Task<ActionResult<RequestResponse<PagedResponse<UserRecord>>>> GetUsers(
+        [FromRoute] Guid groupId, [FromQuery] PaginationSearchQueryParams pagination)
+    {
+        var currentUser = await GetCurrentUser();
+        if (currentUser.Result == null) return ErrorMessageResult<PagedResponse<UserRecord>>(currentUser.Error);
+
+        return FromServiceResponse(await userGroupService.GetUsersInGroup(groupId, pagination, currentUser.Result));
+    }
+
+    [Authorize]
+    [HttpGet("my")]
+    public async Task<ActionResult<RequestResponse<PagedResponse<UserGroupRecord>>>> GetMyGroups(
+        [FromQuery] PaginationSearchQueryParams pagination)
+    {
+        var currentUser = await GetCurrentUser();
+        if (currentUser.Result == null) return ErrorMessageResult<PagedResponse<UserGroupRecord>>(currentUser.Error);
+
+        return FromServiceResponse(await userGroupService.GetGroupsForUser(currentUser.Result.Id, pagination));
+    }
+
+    [Authorize]
+    [HttpPost("{groupId:guid}/users/{userId:guid}")]
+    public async Task<ActionResult<RequestResponse>> AddUser([FromRoute] Guid groupId, [FromRoute] Guid userId)
+    {
+        var currentUser = await GetCurrentUser();
+        if (currentUser.Result == null) return ErrorMessageResult(currentUser.Error);
+
+        return FromServiceResponse(await userGroupService.AddUserToGroup(groupId, userId, currentUser.Result));
+    }
+
+    [Authorize]
+    [HttpDelete("{groupId:guid}/users/{userId:guid}")]
+    public async Task<ActionResult<RequestResponse>> RemoveUser([FromRoute] Guid groupId, [FromRoute] Guid userId)
+    {
+        var currentUser = await GetCurrentUser();
+        if (currentUser.Result == null) return ErrorMessageResult(currentUser.Error);
+
+        return FromServiceResponse(await userGroupService.RemoveUserFromGroup(groupId, userId, currentUser.Result));
+    }
 }

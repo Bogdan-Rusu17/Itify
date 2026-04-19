@@ -14,4 +14,9 @@ public sealed class UserGroupSpec : Specification<UserGroup>
     {
         Query.Where(g => g.Name == name);
     }
+
+    public UserGroupSpec(Guid id, bool includeUsers)
+    {
+        Query.Where(g => g.Id == id).Include(g => g.Users);
+    }
 }

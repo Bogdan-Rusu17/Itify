@@ -29,4 +29,9 @@ public sealed class UserGroupProjectionSpec : Specification<UserGroup, UserGroup
         var engineSearchExpr = $"%{searchExpr.Replace(" ", "%")}%";
         Query.Where(g => EF.Functions.ILike(g.Name, engineSearchExpr));
     }
+
+    public UserGroupProjectionSpec(Guid userId, bool withUser) : this(true)
+    {
+        Query.Where(g => g.Users.Any(u => u.Id == userId));
+    }
 }

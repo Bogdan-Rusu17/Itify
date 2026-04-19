@@ -46,4 +46,9 @@ public sealed class UserProjectionSpec : Specification<User, UserRecord>
     {
         Query.Where(e => e.Role == role);
     }
+
+    public UserProjectionSpec(Guid groupId, bool withGroup) : this(true)
+    {
+        Query.Where(e => e.UserGroups.Any(g => g.Id == groupId));
+    }
 }
