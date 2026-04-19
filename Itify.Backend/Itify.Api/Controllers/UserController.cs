@@ -1,17 +1,18 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Itify.Infrastructure.Authorization;
-using Itify.Infrastructure.Requests;
 using Itify.Infrastructure.Responses;
 using Itify.Services.Abstractions;
 using Itify.Services.Authorization;
 using Itify.Services.DataTransferObjects;
+using Itify.Services.Requests;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Itify.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class UserController(ILogger<UserController> logger, IUserService userService) : AuthorizedController(logger, userService)
+public class UserController(ILogger<UserController> logger, IUserService userService)
+    : AuthorizedController(logger, userService)
 {
     [Authorize]
     [HttpGet("{id:guid}")]
@@ -25,7 +26,8 @@ public class UserController(ILogger<UserController> logger, IUserService userSer
 
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<RequestResponse<PagedResponse<UserRecord>>>> GetPage([FromQuery] PaginationSearchQueryParams pagination)
+    public async Task<ActionResult<RequestResponse<PagedResponse<UserRecord>>>> GetPage(
+        [FromQuery] UserPaginationQueryParams pagination)
     {
         var currentUser = await GetCurrentUser();
         if (currentUser.Result == null) return ErrorMessageResult<PagedResponse<UserRecord>>(currentUser.Error);
