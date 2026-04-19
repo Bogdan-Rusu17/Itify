@@ -18,7 +18,7 @@ public class TicketServiceTests
 {
     private readonly IMailService _mailService;
     private readonly IRepository<WebAppDatabaseContext> _repository;
-    private readonly TicketService _sut;
+    private readonly ITicketService _sut;
 
     public TicketServiceTests()
     {
@@ -94,7 +94,7 @@ public class TicketServiceTests
 
         result.Error?.Message.Should().Be(CommonErrors.DeviceAlreadyInRepair.Message);
     }
-    
+
     [Fact]
     public async Task AddTicket_WhenResolvedTicketExists_DeletesOldAndCreatesNew()
     {
@@ -118,7 +118,7 @@ public class TicketServiceTests
         await _repository.Received(1).DeleteAsync<Ticket>(existingTicketId, Arg.Any<CancellationToken>());
         await _repository.Received(1).AddAsync(Arg.Any<Ticket>(), Arg.Any<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task UpdateTicket_WhenUserIsNotAdminOrItEngineer_ReturnsError()
     {
@@ -128,7 +128,7 @@ public class TicketServiceTests
 
         result.Error?.Message.Should().Be(CommonErrors.TicketUnauthorizedUpdate.Message);
     }
-    
+
     [Fact]
     public async Task UpdateTicket_WhenTicketNotFound_ReturnsError()
     {
@@ -141,7 +141,7 @@ public class TicketServiceTests
 
         result.Error?.Message.Should().Be(CommonErrors.TicketNotFound.Message);
     }
-    
+
     [Fact]
     public async Task UpdateTicket_WhenAlreadyResolved_ReturnsError()
     {
@@ -154,7 +154,7 @@ public class TicketServiceTests
 
         result.Error?.Message.Should().Be(CommonErrors.TicketAlreadyResolved.Message);
     }
-    
+
     [Fact]
     public async Task UpdateTicket_WhenResolvedRepairRequest_SetsDeviceStatusToAssigned()
     {
@@ -180,48 +180,48 @@ public class TicketServiceTests
         result.IsOk.Should().BeTrue();
         device.Status.Should().Be(DeviceStatusEnum.Assigned);
     }
-    
+
     [Fact]
     public async Task DeleteTicket_WhenTicketNotFound_ReturnsError()
     {
         _repository.GetAsync(Arg.Any<TicketSpec>(), Arg.Any<CancellationToken>())
             .Returns((Ticket?)null);
-        
+
         var result = await _sut.DeleteTicket(Guid.NewGuid(),
             new UserRecord { Role = UserRoleEnum.Employee });
 
         result.Error?.Message.Should().Be(CommonErrors.TicketNotFound.Message);
     }
-    
+
     [Fact]
-    public async Task DeleteTicket_WhenUserIsNotAdminOrItEngineer_ReturnsError ()
+    public async Task DeleteTicket_WhenUserIsNotAdminOrItEngineer_ReturnsError()
     {
         _repository.GetAsync(Arg.Any<TicketSpec>(), Arg.Any<CancellationToken>())
             .Returns(new Ticket { Status = TicketStatusEnum.InProgress });
-        
+
         var result = await _sut.DeleteTicket(Guid.NewGuid(),
             new UserRecord { Role = UserRoleEnum.Employee });
 
         result.Error?.Message.Should().Be(CommonErrors.TicketUnauthorizedDelete.Message);
     }
-    
+
     [Fact]
-    public async Task DeleteTicket_ShouldSetDeviceStatusToAssignedIfRepairTicket ()
+    public async Task DeleteTicket_ShouldSetDeviceStatusToAssignedIfRepairTicket()
     {
         var deviceId = Guid.NewGuid();
         var deviceAssignmentId = Guid.NewGuid();
         var device = new Device { Id = deviceId, Status = DeviceStatusEnum.InRepair };
-        
+
         _repository.GetAsync(Arg.Any<TicketSpec>(), Arg.Any<CancellationToken>())
             .Returns(new Ticket { Status = TicketStatusEnum.InProgress, Type = TicketTypeEnum.RepairRequest });
         _repository.GetAsync(Arg.Any<DeviceAssignmentSpec>(), Arg.Any<CancellationToken>())
             .Returns(new DeviceAssignment { DeviceId = deviceId, Id = deviceAssignmentId });
         _repository.GetAsync(Arg.Any<DeviceSpec>(), Arg.Any<CancellationToken>())
             .Returns(device);
-        
+
         var result = await _sut.DeleteTicket(Guid.NewGuid(),
             new UserRecord { Role = UserRoleEnum.ItEngineer });
-        
+
         result.IsOk.Should().BeTrue();
         device.Status.Should().Be(DeviceStatusEnum.Assigned);
     }
