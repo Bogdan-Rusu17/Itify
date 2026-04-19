@@ -1,0 +1,32 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Itify.Backend/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Itify.Backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Itify.Backend/Itify.Tests/Itify.Tests.csproj
+
+      - name: Build
+        run: dotnet build Itify.Backend/Itify.Tests/Itify.Tests.csproj --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test Itify.Backend/Itify.Tests/Itify.Tests.csproj --no-build --configuration Release --verbosity normal
