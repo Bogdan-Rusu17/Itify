@@ -75,4 +75,16 @@ public static class CommonErrors
 
     public static ErrorMessage DeviceAlreadyReturned =>
         new(HttpStatusCode.BadRequest, "Device already returned!", ErrorCodes.CannotUpdate);
+
+    public static ErrorMessage TicketNotFound =>
+        new(HttpStatusCode.NotFound, "Ticket doesn't exist!", ErrorCodes.EntityNotFound);
+
+    public static ErrorMessage TicketUnauthorizedUpdate =>
+        new(HttpStatusCode.Forbidden, "Only admins and IT engineers can update ticket status!", ErrorCodes.CannotUpdate);
+
+    public static ErrorMessage TicketUnauthorizedDelete =>
+        new(HttpStatusCode.Forbidden, "You can only delete your own tickets!", ErrorCodes.CannotDelete);
+
+    public static ErrorMessage TicketAlreadyResolved =>
+        new(HttpStatusCode.BadRequest, "Ticket is already resolved!", ErrorCodes.CannotUpdate);
 }
