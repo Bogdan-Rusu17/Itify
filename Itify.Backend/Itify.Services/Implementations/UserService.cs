@@ -111,11 +111,13 @@ public class UserService(
         // Get the count of all user entities in the database.
     }
 
-    public async Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord? requestingUser,
+    public async Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
     {
-        if (requestingUser != null && requestingUser.Role != UserRoleEnum.Admin)
+        if (requestingUser.Role != UserRoleEnum.Admin)
+        {
             return ServiceResponse.FromError(CommonErrors.UserAddUnauthorized);
+        }
 
         var existing = await repository.GetAsync(new UserSpec(user.Email), cancellationToken);
 
@@ -135,29 +137,46 @@ public class UserService(
         return ServiceResponse.ForSuccess();
     }
 
-    public async Task<ServiceResponse> UpdateUser(UserUpdateRecord user, UserRecord? requestingUser,
+    public async Task<ServiceResponse> UpdateUser(UserUpdateRecord user, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
     {
-        if (requestingUser != null && requestingUser.Role != UserRoleEnum.Admin && requestingUser.Id != user.Id)
+        if (requestingUser.Role != UserRoleEnum.Admin && requestingUser.Id != user.Id)
+        {
             return ServiceResponse.FromError(CommonErrors.UserUpdateUnauthorized);
+        }
 
         var entity = await repository.GetAsync(new UserSpec(user.Id), cancellationToken);
 
-        if (entity == null) return ServiceResponse.FromError(CommonErrors.UserNotFound);
+        if (entity == null)
+        {
+            return ServiceResponse.FromError(CommonErrors.UserNotFound);
+        }
 
         entity.Name = user.Name ?? entity.Name;
         entity.Password = user.Password ?? entity.Password;
+
+        if (user.Role.HasValue)
+        {
+            if (requestingUser.Role != UserRoleEnum.Admin)
+            {
+                return ServiceResponse.FromError(CommonErrors.UserUpdateUnauthorized);
+            }
+
+            entity.Role = user.Role.Value;
+        }
 
         await repository.UpdateAsync(entity, cancellationToken);
 
         return ServiceResponse.ForSuccess();
     }
 
-    public async Task<ServiceResponse> DeleteUser(Guid id, UserRecord? requestingUser = null,
+    public async Task<ServiceResponse> DeleteUser(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default)
     {
-        if (requestingUser != null && requestingUser.Role != UserRoleEnum.Admin && requestingUser.Id != id)
+        if (requestingUser.Role != UserRoleEnum.Admin && requestingUser.Id != id)
+        {
             return ServiceResponse.FromError(CommonErrors.UserDeleteUnauthorized);
+        }
 
         var entity = await repository.GetAsync(new UserSpec(id), cancellationToken);
 

@@ -42,7 +42,7 @@ public interface IUserService
     ///     AddUser adds an user and verifies if requesting user has permissions to add one.
     ///     If the requesting user is null then no verification is performed as it indicates that the application.
     /// </summary>
-    public Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord? requestingUser = null,
+    public Task<ServiceResponse> AddUser(UserAddRecord user, UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -50,14 +50,9 @@ public interface IUserService
     ///     then that should be allowed.
     ///     If the requesting user is null then no verification is performed as it indicates that the application.
     /// </summary>
-    public Task<ServiceResponse> UpdateUser(UserUpdateRecord user, UserRecord? requestingUser = null,
+    public Task<ServiceResponse> UpdateUser(UserUpdateRecord user, UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 
-    /// <summary>
-    ///     DeleteUser deletes an user and verifies if requesting user has permissions to delete it, if the user is his own
-    ///     then that should be allowed.
-    ///     If the requesting user is null then no verification is performed as it indicates that the application.
-    /// </summary>
-    public Task<ServiceResponse> DeleteUser(Guid id, UserRecord? requestingUser = null,
+    public Task<ServiceResponse> DeleteUser(Guid id, UserRecord requestingUser,
         CancellationToken cancellationToken = default);
 }
