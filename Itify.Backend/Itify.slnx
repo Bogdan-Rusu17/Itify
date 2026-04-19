@@ -3,4 +3,5 @@
   <Project Path="Itify.Database/Itify.Database.csproj" />
   <Project Path="Itify.Infrastructure/Itify.Infrastructure.csproj" />
   <Project Path="Itify.Services/Itify.Services.csproj" />
+  <Project Path="Itify.Tests/Itify.Tests.csproj" />
 </Solution>
