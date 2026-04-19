@@ -99,6 +99,27 @@ public class DeviceRequestService(IRepository<WebAppDatabaseContext> repository)
 
         await repository.UpdateAsync(entity, cancellationToken);
 
+        if (request.Status == RequestStatusEnum.Approved)
+        {
+            var availableDevice = await repository.GetAsync(
+                new DeviceSpec(entity.CategoryId, DeviceStatusEnum.Available), cancellationToken);
+
+            if (availableDevice == null)
+            {
+                return ServiceResponse.FromError(CommonErrors.DeviceNotAvailable);
+            }
+
+            availableDevice.Status = DeviceStatusEnum.Assigned;
+            await repository.UpdateAsync(availableDevice, cancellationToken);
+
+            await repository.AddAsync(new DeviceAssignment
+            {
+                DeviceId = availableDevice.Id,
+                UserId = entity.UserId,
+                AssignedAt = DateTime.UtcNow
+            }, cancellationToken);
+        }
+
         return ServiceResponse.ForSuccess();
     }
 
