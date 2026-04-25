@@ -1,0 +1,28 @@
+services:
+  postgres-users:
+    image: postgres:15
+    container_name: itify-postgres-users
+    environment:
+      POSTGRES_DB: itify_users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - itify_users_data:/var/lib/postgresql/data
+
+  postgres-equipment:
+    image: postgres:15
+    container_name: itify-postgres-equipment
+    environment:
+      POSTGRES_DB: itify_equipment
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - itify_equipment_data:/var/lib/postgresql/data
+
+volumes:
+  itify_users_data:
+  itify_equipment_data:
