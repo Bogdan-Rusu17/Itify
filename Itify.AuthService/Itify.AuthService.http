@@ -1,0 +1,6 @@
+@Itify.AuthService_HostAddress = http://localhost:5168
+
+GET {{Itify.AuthService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
