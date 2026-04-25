@@ -13,6 +13,14 @@ public class DeviceRequestDbController(
     IRepository<EquipmentDbContext> equipmentRepo,
     IRepository<UsersDbContext> usersRepo) : ControllerBase
 {
+    [HttpGet("pending")]
+    public async Task<IActionResult> HasPending([FromQuery] Guid userId, [FromQuery] Guid categoryId)
+    {
+        var existing = await equipmentRepo.GetAsync(new DeviceRequestSpec(userId, categoryId));
+        var hasPending = existing?.Status == Enums.RequestStatusEnum.Pending;
+        return Ok(new { hasPending });
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {

@@ -13,6 +13,9 @@ public sealed class UserGroupProjectionSpec : Specification<UserGroup, UserGroup
 
     public UserGroupProjectionSpec(Guid id) : this() => Query.Where(e => e.Id == id);
 
+    public UserGroupProjectionSpec(Guid userId, bool forUser) : this() =>
+        Query.Where(e => e.Users.Any(u => u.Id == userId));
+
     public UserGroupProjectionSpec(string? search) : this()
     {
         if (!string.IsNullOrWhiteSpace(search))

@@ -22,6 +22,13 @@ public class TicketDbController(
         return Ok((await Enrich([ticket])).First());
     }
 
+    [HttpGet("by-assignment/{assignmentId:guid}")]
+    public async Task<IActionResult> GetByAssignment(Guid assignmentId)
+    {
+        var ticket = await equipmentRepo.GetAsync(new TicketSpec(assignmentId, withAssignmentId: true));
+        return ticket is null ? NotFound() : Ok((await Enrich([ticket])).First());
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetPaged(
         [FromQuery] int page = 1,

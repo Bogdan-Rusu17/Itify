@@ -1,0 +1,6 @@
+@Itify.BusinessService_HostAddress = http://localhost:5168
+
+GET {{Itify.BusinessService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

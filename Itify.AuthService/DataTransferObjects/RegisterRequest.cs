@@ -1,3 +1,8 @@
 namespace Itify.AuthService.DataTransferObjects;
 
-public record RegisterRequest(string Name, string Email, string Password);
+public class RegisterRequest
+{
+    public string Name { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string Password { get; set; } = null!;
+}

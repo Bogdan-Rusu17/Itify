@@ -52,6 +52,24 @@ public class UserGroupDbController(IRepository<UsersDbContext> repo) : Controlle
         return deleted == 0 ? NotFound() : NoContent();
     }
 
+    [HttpGet("{groupId:guid}/members")]
+    public async Task<IActionResult> GetMembers(Guid groupId,
+        [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var pagination = new PaginationQueryParams { Page = page, PageSize = pageSize };
+        var result = await repo.PageAsync<User, UserRecord>(pagination, new UserProjectionSpec(groupId, inGroup: true));
+        return Ok(result);
+    }
+
+    [HttpGet("by-user/{userId:guid}")]
+    public async Task<IActionResult> GetGroupsForUser(Guid userId,
+        [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var pagination = new PaginationQueryParams { Page = page, PageSize = pageSize };
+        var result = await repo.PageAsync<UserGroup, UserGroupRecord>(pagination, new UserGroupProjectionSpec(userId, forUser: true));
+        return Ok(result);
+    }
+
     [HttpPost("{groupId:guid}/members/{userId:guid}")]
     public async Task<IActionResult> AddMember(Guid groupId, Guid userId)
     {

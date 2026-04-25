@@ -18,7 +18,7 @@ public class AuthController(IDbServiceClient dbClient, JwtService jwtService) : 
             return NotFound(new { Message = "User not found!", Code = ErrorCodes.EntityNotFound });
         if (user.Password != PasswordUtils.HashPassword(request.Password))
             return BadRequest(new { Message = "Wrong password!", Code = ErrorCodes.WrongPassword });
-        return Ok(new LoginResponse(jwtService.GenerateToken(user), user.Id, user.Name, user.Email, user.Role));
+        return Ok(new LoginResponse { Token = jwtService.GenerateToken(user), UserId = user.Id, Name = user.Name, Email = user.Email, Role = user.Role });
     }
 
     [HttpPost("register")]
@@ -26,11 +26,13 @@ public class AuthController(IDbServiceClient dbClient, JwtService jwtService) : 
     {
         if (await dbClient.UserExistsAsync(request.Email))
             return Conflict(new { Message = "A user with this email already exists!", Code = ErrorCodes.UserAlreadyExists });
-        await dbClient.CreateUserAsync(new CreateUserRequest(
-            request.Name,
-            request.Email,
-            PasswordUtils.HashPassword(request.Password),
-            UserRoleEnum.Employee));
+        await dbClient.CreateUserAsync(new CreateUserRequest
+        {
+            Name = request.Name,
+            Email = request.Email,
+            Password = PasswordUtils.HashPassword(request.Password),
+            Role = UserRoleEnum.Employee
+        });
         return Created(string.Empty, null);
     }
 }

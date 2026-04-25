@@ -14,6 +14,9 @@ public sealed class UserProjectionSpec : Specification<User, UserRecord>
 
     public UserProjectionSpec(Guid id) : this() => Query.Where(e => e.Id == id);
 
+    public UserProjectionSpec(Guid groupId, bool inGroup) : this() =>
+        Query.Where(e => e.UserGroups.Any(g => g.Id == groupId));
+
     public UserProjectionSpec(string? search, UserRoleEnum? role) : this()
     {
         if (!string.IsNullOrWhiteSpace(search))

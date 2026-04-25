@@ -25,6 +25,13 @@ public class DeviceDbController(IRepository<EquipmentDbContext> repo) : Controll
         return device is null ? NotFound() : Ok(device);
     }
 
+    [HttpGet("first-available/{categoryId:guid}")]
+    public async Task<IActionResult> GetFirstAvailable(Guid categoryId)
+    {
+        var device = await repo.GetAsync(new DeviceSpec(categoryId, Enums.DeviceStatusEnum.Available));
+        return device is null ? NotFound() : Ok(new { device.Id, device.Name, device.SerialNumber });
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetPaged(
         [FromQuery] int page = 1,
