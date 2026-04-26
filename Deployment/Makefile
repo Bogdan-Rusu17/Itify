@@ -28,13 +28,19 @@ deploy:
 	kubectl apply -f charts/services/auth-service.yaml
 	kubectl apply -f charts/services/business-service.yaml
 	kubectl apply -f charts/services/pgadmin.yaml
+	kubectl apply -f charts/services/grafana-external.yaml
 	$(MAKE) install-kong
+	$(MAKE) install-monitoring
 	kubectl apply -f charts/kong/routes.yaml
-
 
 install-kong:
 	helm repo add kong https://charts.konghq.com
 	helm repo update
 	helm upgrade --install kong kong/ingress -n kong --create-namespace -f charts/kong/values.yaml
+
+install-monitoring:
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo update
+	helm upgrade --install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f charts/monitoring/values.yaml
 
 

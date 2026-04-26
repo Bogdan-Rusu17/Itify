@@ -1,0 +1,16 @@
+grafana:
+  adminPassword: grafana123
+  operator:
+    dashboardsConfigMapRefEnabled: false
+  grafana.ini:
+    server:
+      root_url: https://itify.local/grafana
+      serve_from_sub_path: true
+
+alertmanager:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false

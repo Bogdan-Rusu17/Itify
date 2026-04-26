@@ -1,0 +1,10 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-external
+  namespace: itify
+spec:
+  type: ExternalName
+  externalName: monitoring-grafana.monitoring.svc.cluster.local
+  ports:
+    - port: 80
