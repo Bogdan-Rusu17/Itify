@@ -27,6 +27,7 @@ deploy:
 	kubectl apply -f charts/services/db-service.yaml
 	kubectl apply -f charts/services/auth-service.yaml
 	kubectl apply -f charts/services/business-service.yaml
+	kubectl apply -f charts/services/pgadmin.yaml
 	$(MAKE) install-kong
 	kubectl apply -f charts/kong/routes.yaml
 
