@@ -1,0 +1,137 @@
+#Kong routes and JWT plugin configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: itify-kong-jwt-credential
+  namespace: itify
+  labels:
+    konghq.com/credential: jwt
+type: Opaque
+stringData:
+  key: itify-auth-service
+  algorithm: HS256
+  secret: <jwt-signing-key-equal-to-jwt-secret.yaml>
+
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: itify-users
+  namespace: itify
+  annotations:
+    kubernetes.io/ingress.class: kong
+username: itify-users
+credentials:
+  - itify-kong-jwt-credential
+
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: jwt-auth
+  namespace: itify
+plugin: jwt
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress
+  namespace: itify
+  annotations:
+    konghq.com/strip-path: "true"
+spec:
+  tls:
+    - hosts:
+        - itify.local
+      secretName: itify-tls
+  ingressClassName: kong
+  rules:
+    - host: itify.local
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: business-ingress
+  namespace: itify
+  annotations:
+    konghq.com/strip-path: "true"
+spec:
+  tls:
+    - hosts:
+        - itify.local
+      secretName: itify-tls
+  ingressClassName: kong
+  rules:
+    - host: itify.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: business-service
+                port:
+                  number: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin-ingress
+  namespace: itify
+  annotations:
+    konghq.com/strip-path: "false"
+spec:
+  tls:
+    - hosts:
+        - itify.local
+      secretName: itify-tls
+  ingressClassName: kong
+  rules:
+    - host: itify.local
+      http:
+        paths:
+          - path: /pgadmin
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: itify
+  annotations:
+    konghq.com/strip-path: "false"
+spec:
+  tls:
+    - hosts:
+        - itify.local
+      secretName: itify-tls
+  ingressClassName: kong
+  rules:
+    - host: itify.local
+      http:
+        paths:
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana-external
+                port:
+                  number: 80
