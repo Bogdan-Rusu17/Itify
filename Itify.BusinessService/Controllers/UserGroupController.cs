@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Itify.BusinessService.Controllers;
 
 [ApiController]
-[Route("api/user-groups")]
+[Route("user-groups")]
 [Authorize]
 public class UserGroupController(IDbServiceClient db) : AuthorizedController(db)
 {

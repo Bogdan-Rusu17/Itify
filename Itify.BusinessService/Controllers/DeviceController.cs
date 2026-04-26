@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Itify.BusinessService.Controllers;
 
 [ApiController]
-[Route("api/devices")]
+[Route("devices")]
 [Authorize]
 public class DeviceController(IDbServiceClient db) : AuthorizedController(db)
 {

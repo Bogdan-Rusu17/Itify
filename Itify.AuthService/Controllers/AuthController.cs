@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Itify.AuthService.Controllers;
 
 [ApiController]
-[Route("auth")]
+[Route("")]
 public class AuthController(IDbServiceClient dbClient, JwtService jwtService) : ControllerBase
 {
     [HttpPost("login")]

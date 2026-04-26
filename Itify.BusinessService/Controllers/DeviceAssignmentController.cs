@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Itify.BusinessService.Controllers;
 
 [ApiController]
-[Route("api/device-assignments")]
+[Route("device-assignments")]
 [Authorize]
 public class DeviceAssignmentController(IDbServiceClient db, MailService mail) : AuthorizedController(db)
 {

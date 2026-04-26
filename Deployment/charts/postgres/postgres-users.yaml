@@ -1,0 +1,63 @@
+﻿apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-users-pvc
+  namespace: itify
+spec:
+    accessModes:
+      - ReadWriteOnce
+    resources: 
+      requests:
+        storage: 1Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-users
+  namespace: itify
+spec:
+  selector:
+    matchLabels:
+      app: postgres-users
+  serviceName: "postgres-users"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-users
+    spec:
+      containers:
+      - name: postgres-users
+        image: postgres:16
+        ports:
+          - containerPort: 5432
+        env:
+          - name: POSTGRES_DB
+            value: itify_users
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: itify-postgres-secret
+                key: users-password
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-users-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-users
+  namespace: itify
+spec:
+  selector:
+    app: postgres-users
+  ports:
+    - port: 5432
+      targetPort: 5432
+                  

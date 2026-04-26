@@ -1,0 +1,47 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-service
+  namespace: itify  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-service
+  template:  
+    metadata:
+      labels:
+        app: db-service
+    spec:
+      containers:
+        - name: db-service
+          image: bogdanr17/itify-db-service
+          ports:
+            - containerPort: 8080
+          env:
+            - name: USERS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: itify-postgres-secret
+                  key: users-password
+            - name: EQUIPMENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: itify-postgres-secret
+                  key: equipment-password
+            - name: ConnectionStrings__UsersDb
+              value: Host=postgres-users;Port=5432;Database=itify_users;Username=postgres;Password=$(USERS_PASSWORD)
+            - name: ConnectionStrings__EquipmentDb
+              value: Host=postgres-equipment;Port=5432;Database=itify_equipment;Username=postgres;Password=$(EQUIPMENT_PASSWORD)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+  namespace: itify
+spec:
+  selector:
+    app: db-service
+  ports:
+    - port: 80
+      targetPort: 8080

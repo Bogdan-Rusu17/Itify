@@ -1,0 +1,62 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: business-service
+  namespace: itify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: business-service
+  template:
+    metadata:
+      labels:
+        app: business-service
+    spec:
+      containers:
+        - name: business-service
+          image: bogdanr17/itify-business
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DbService__BaseUrl
+              value: http://db-service:80/
+            - name: Jwt__Key
+              valueFrom:
+                secretKeyRef:
+                  name: itify-jwt-secret
+                  key: jwt-key
+            - name: Jwt__Issuer
+              value: itify-auth-service
+            - name: Jwt__Audience
+              value: itify-clients
+            - name: Mail__MailEnable
+              value: "false"
+            - name: Mail__MailHost
+              value: sandbox.smtp.mailtrap.io
+            - name: Mail__MailPort
+              value: "587"
+            - name: Mail__MailUser
+              valueFrom:
+                secretKeyRef:
+                  name: itify-mail-secret
+                  key: mail-user
+            - name: Mail__MailPassword
+              valueFrom:
+                secretKeyRef:
+                  name: itify-mail-secret
+                  key: mail-password
+            - name: Mail__FrontendUrl
+              value: http://localhost:3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: business-service
+  namespace: itify
+spec:
+  selector:
+    app: business-service
+  ports:
+    - port: 80
+      targetPort: 8080

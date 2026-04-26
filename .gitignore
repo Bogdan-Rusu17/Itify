@@ -17,3 +17,11 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+# Kubernetes secrets
+Deployment/charts/secrets/
+Deployment/charts/kong/routes.yaml
+
+# TLS certificates
+Deployment/*.pem
+Deployment/*-key.pem

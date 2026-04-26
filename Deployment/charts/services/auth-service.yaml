@@ -1,0 +1,44 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: itify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: bogdanr17/itify-auth
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DbService__BaseUrl
+              value: http://db-service:80/
+            - name: Jwt__Key
+              valueFrom:
+                secretKeyRef:
+                  name: itify-jwt-secret
+                  key: jwt-key
+            - name: Jwt__Issuer
+              value: itify-auth-service
+            - name: Jwt__Audience
+              value: itify-clients
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: itify
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - port: 80
+      targetPort: 8080

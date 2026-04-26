@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Itify.BusinessService.Controllers;
 
 [ApiController]
-[Route("api/tickets")]
+[Route("tickets")]
 [Authorize]
 public class TicketController(IDbServiceClient db, MailService mail) : AuthorizedController(db)
 {
