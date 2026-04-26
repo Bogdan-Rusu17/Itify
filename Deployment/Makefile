@@ -34,5 +34,6 @@ deploy:
 install-kong:
 	helm repo add kong https://charts.konghq.com
 	helm repo update
-	helm install kong kong/ingress -n kong --create-namespace -f charts/kong/values.yaml
+	helm upgrade --install kong kong/ingress -n kong --create-namespace -f charts/kong/values.yaml
+
 

@@ -9,7 +9,10 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
-    c.SwaggerDoc("v1", new() { Title = "Itify Auth Service", Version = "v1" }));
+{
+    c.SwaggerDoc("v1", new() { Title = "Itify Auth Service", Version = "v1" });
+    c.AddServer(new Microsoft.OpenApi.Models.OpenApiServer { Url = "/auth" });
+});
 
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddSingleton<JwtService>();

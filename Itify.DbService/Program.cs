@@ -35,8 +35,24 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Itify DB Se
 
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<UsersDbContext>().Database.Migrate();
+    var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
     scope.ServiceProvider.GetRequiredService<EquipmentDbContext>().Database.Migrate();
+    usersDb.Database.Migrate();
+
+    if (!usersDb.Users.Any())
+    {
+        byte[] salt = [0xAF, 0xA5, 0xB5, 0x46, 0xD1, 0xA7, 0xB6, 0xB8, 0xFD, 0xA1, 0xB2, 0x37, 0xFA, 0xF1, 0x32, 0x46];
+        var hash = Convert.ToBase64String(Microsoft.AspNetCore.Cryptography.KeyDerivation.KeyDerivation.Pbkdf2(
+            "default", salt, Microsoft.AspNetCore.Cryptography.KeyDerivation.KeyDerivationPrf.HMACSHA256, 1000, 256 / 8));
+        usersDb.Users.Add(new Itify.DbService.Entities.User
+        {
+            Name = "Admin",
+            Email = "admin@default.com",
+            Password = hash,
+            Role = Itify.DbService.Enums.UserRoleEnum.Admin
+        });
+        usersDb.SaveChanges();
+    }
 }
 
 app.MapControllers();
